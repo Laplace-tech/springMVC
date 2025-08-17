@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.items}">상품 목록</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+        thead.table-header {
+            background: linear-gradient(90deg, #0d6efd, #0dcaf0);
+            color: #fff;
+        }
+        tbody tr:hover {
+            background-color: #f1f5ff;
+        }
+        .search-bar {
+            max-width: 300px;
+        }
+        .btn-group > form {
+            margin: 0;
+        }
+        .btn-group > form > button {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        .table-responsive {
+            box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+
+    <!-- 헤더 -->
+    <header class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="fa-solid fa-box me-2"></i>
+            <span th:text="#{page.items}">상품 목록</span>
+        </h2>
+        <a class="btn btn-primary shadow-sm" th:href="@{/items/add}" aria-label="상품 등록하기">
+            <i class="fa-solid fa-plus me-1"></i><span th:text="#{page.addItem}">상품 등록</span>
+        </a>
+    </header>
+
+    <!-- 검색 -->
+    <form class="d-flex mb-3" method="get" role="search" aria-label="상품 검색">
+        <input type="search" name="keyword"
+               class="form-control me-2 search-bar"
+               placeholder="상품명 검색..." th:value="${keyword}" autocomplete="off">
+        <button type="submit" class="btn btn-outline-primary" aria-label="검색">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </form>
+
+    <!-- 상품 목록 테이블 -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-header">
+                <tr>
+                    <th scope="col" th:text="#{label.item.id}">상품 ID</th>
+                    <th scope="col" th:text="#{label.item.itemName}">상품명</th>
+                    <th scope="col" th:text="#{label.item.price}">가격</th>
+                    <th scope="col" th:text="#{label.item.quantity}">수량</th>
+                    <th scope="col" class="text-center" th:text="#{label.item.option}">관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${items}">
+                    <td th:text="${item.id}">1</td>
+                    <td>
+                        <a th:href="@{/items/{id}(id=${item.id})}" 
+                           class="text-decoration-none fw-semibold" 
+                           th:text="${item.itemName}" 
+                           th:attr="title=${item.itemName}">상품명</a>
+                    </td>
+                    <td th:text="${#numbers.formatInteger(item.price,0,'COMMA')} + '원'">0</td>
+                    <td th:text="${item.quantity}">0</td>
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a th:href="@{/items/{id}/edit(id=${item.id})}" 
+                               class="btn btn-warning text-white" aria-label="상품 수정">
+                                <i class="fa-solid fa-pen"></i> 수정
+                            </a>
+                            <form th:action="@{/items/{id}/delete(id=${item.id})}" method="post"
+                                  onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                <button type="submit" class="btn btn-danger" aria-label="상품 삭제">
+                                    <i class="fa-solid fa-trash"></i> 삭제
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(items)}">
+                    <td colspan="5" class="text-center text-muted py-4">
+                        <i class="fa-regular fa-face-frown me-2"></i>
+                        <span th:text="#{message.item.noItems}">등록된 상품이 없습니다.</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

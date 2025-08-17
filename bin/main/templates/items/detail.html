@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.item}">상품 상세</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .card-header {
+            background: linear-gradient(90deg, #0d6efd, #0dcaf0);
+            color: white;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        .form-control[readonly] {
+            background-color: #f8f9fa;
+            font-weight: 500;
+        }
+        .card-footer .btn {
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+
+    <!-- 저장 완료 메시지 -->
+    <div th:if="${param.status}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fa-solid fa-circle-check me-1"></i> 
+        <span th:text="#{alert.item.saveSuccess}">저장 완료</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="닫기"></button>
+    </div>
+
+    <!-- 상품 정보 카드 -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fa-solid fa-box me-1"></i> 
+            <span th:text="#{page.item}">상품 상세</span>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="itemId" class="form-label" th:text="#{label.item.id}">상품 ID</label>
+                <input type="text" id="itemId" class="form-control" th:value="${item.id}" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label for="itemName" class="form-label" th:text="#{label.item.itemName}">상품명</label>
+                <input type="text" id="itemName" class="form-control" th:value="${item.itemName}" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label for="price" class="form-label" th:text="#{label.item.price}">가격</label>
+                <input type="text" id="price" class="form-control"
+                       th:value="${#numbers.formatInteger(item.price,0,'COMMA')} + '원'" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label for="quantity" class="form-label" th:text="#{label.item.quantity}">수량</label>
+                <input type="text" id="quantity" class="form-control" th:value="${item.quantity}" readonly>
+            </div>
+        </div>
+
+        <div class="card-footer text-end">
+            <a th:href="@{/items}" class="btn btn-secondary">
+                <i class="fa-solid fa-list me-1"></i> <span th:text="#{page.items}">상품 목록</span>
+            </a>
+            <a th:href="@{/items/{id}/edit(id=${item.id})}" class="btn btn-warning text-white ms-2">
+                <i class="fa-solid fa-pen me-1"></i> <span th:text="#{page.updateItem}">상품 수정</span>
+            </a>
+            <form th:action="@{/items/{id}/delete(id=${item.id})}" method="post" class="d-inline ms-2"
+                  onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa-solid fa-trash me-1"></i> <span th:text="#{button.delete}">삭제</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

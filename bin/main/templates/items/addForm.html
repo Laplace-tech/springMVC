@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.addItem}">상품 등록</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .card-header {
+            background: linear-gradient(90deg, #198754, #20c997);
+            color: white;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        .field-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 4px;
+        }
+        .btn-group-custom {
+            display: flex;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+
+    <div class="card">
+        <div class="card-header">
+            <i class="fa-solid fa-plus me-1"></i>
+            <span th:text="#{page.addItem}">상품 등록</span>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/items/add}" th:object="${form}" method="post" novalidate>
+
+                <!-- 글로벌 에러 -->
+                <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+                    <ul class="mb-0">
+                        <li th:each="error : ${#fields.globalErrors()}" th:text="${error}">글로벌 오류 메시지</li>
+                    </ul>
+                </div>
+
+                <!-- 상품명 -->
+                <div class="mb-3">
+                    <label for="itemName" class="form-label" th:text="#{label.item.itemName}">상품명</label>
+                    <input type="text" id="itemName"
+                           th:field="*{itemName}"
+                           class="form-control"
+                           th:placeholder="#{placeholder.item.itemName}"
+                           aria-describedby="itemNameError">
+                    <div id="itemNameError" class="field-error" th:errors="*{itemName}"></div>
+                </div>
+
+                <!-- 가격 -->
+                <div class="mb-3">
+                    <label for="price" class="form-label" th:text="#{label.item.price}">가격</label>
+                    <input type="number" id="price"
+                           th:field="*{price}"
+                           class="form-control"
+                           min="0"
+                           th:placeholder="#{placeholder.item.price}"
+                           aria-describedby="priceError">
+                    <div id="priceError" class="field-error" th:errors="*{price}"></div>
+                </div>
+
+                <!-- 수량 -->
+                <div class="mb-3">
+                    <label for="quantity" class="form-label" th:text="#{label.item.quantity}">수량</label>
+                    <input type="number" id="quantity"
+                           th:field="*{quantity}"
+                           class="form-control"
+                           min="0"
+                           th:placeholder="#{placeholder.item.quantity}"
+                           aria-describedby="quantityError">
+                    <div id="quantityError" class="field-error" th:errors="*{quantity}"></div>
+                </div>
+
+                <!-- 버튼 영역 -->
+                <div class="btn-group-custom">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa-solid fa-check me-1"></i> <span th:text="#{button.register}">등록</span>
+                    </button>
+                    <a th:href="@{/items}" class="btn btn-secondary">
+                        <i class="fa-solid fa-xmark me-1"></i> <span th:text="#{button.cancel}">취소</span>
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
