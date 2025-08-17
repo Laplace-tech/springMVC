@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.updateMember}">회원 수정</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #343a40;
+        }
+        form div {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #495057;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            box-sizing: border-box;
+        }
+        input:focus {
+            border-color: #0d6efd;
+            outline: none;
+            box-shadow: 0 0 4px rgba(13,110,253,0.3);
+        }
+        input[readonly] {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        .error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            color: white;
+            transition: background 0.2s;
+        }
+        .btn-submit { background-color: #0d6efd; }
+        .btn-submit:hover { background-color: #0b5ed7; }
+
+        .btn-cancel { background-color: #6c757d; }
+        .btn-cancel:hover { background-color: #5c636a; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1 th:text="#{page.updateMember}">회원 수정</h1>
+
+    <form th:action="@{/members/{id}/edit(id=${memberUpdateForm.id})}" th:object="${memberUpdateForm}" method="post">
+        
+		<!-- 숨겨진 id 필드 -->
+		<input type="hidden" th:field="*{id}" />
+		
+		<div>
+            <label th:text="#{label.member.loginId}">아이디</label>
+            <input type="text" th:field="*{loginId}" readonly>
+        </div>
+        <div>
+            <label th:text="#{label.member.displayName}">이름</label>
+            <input type="text" 
+                   th:field="*{displayName}" 
+                   th:placeholder="#{placeholder.member.displayName(2,16)}" />
+            <div class="error" th:if="${#fields.hasErrors('displayName')}" th:errors="*{displayName}"></div>
+        </div>
+        <div>
+            <label th:text="#{label.member.passwordChange}">비밀번호 변경</label>
+            <input type="password" 
+                   th:field="*{password}" 
+                   th:placeholder="#{placeholder.member.password(8,20)}" />
+            <div class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+        </div>
+
+        <div class="btn-container">
+            <button type="submit" class="btn btn-submit" th:text="#{button.update}">수정</button>
+            <a th:href="@{/members/{id}(id=${memberUpdateForm.id})}" class="btn btn-cancel" th:text="#{button.cancel}">취소</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

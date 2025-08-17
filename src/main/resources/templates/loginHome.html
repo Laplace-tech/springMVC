@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 홈</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: "Segoe UI", Arial, sans-serif;
+            padding: 2rem 0;
+        }
+        .btn-lg {
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <h1 class="mb-4">로그인 홈</h1>
+    <hr>
+
+	<!-- 로그인 상태일 때 -->
+	<div th:if="${member != null}" class="mb-4">
+	    <p><strong th:text="${member.displayName}">회원이름</strong> 님 환영합니다!</p>
+	    <p>아이디: <span th:text="${member.loginId}"></span></p>
+
+	    <div class="d-flex flex-wrap align-items-center gap-3">
+
+	        <!-- 상품 목록 이동 -->
+	        <a th:href="@{/items}" class="btn btn-outline-success btn-lg">
+	            <i class="fa-solid fa-box"></i> 상품 목록
+	        </a>
+
+	        <!-- 회원 목록 이동 -->
+	        <a th:href="@{/members}" class="btn btn-outline-info btn-lg">
+	            <i class="fa-solid fa-users"></i> 회원 목록
+	        </a>
+			
+			<!-- 로그아웃 -->
+			<form th:action="@{/logout}" method="post">
+			    <button type="submit" class="btn btn-dark btn-lg">
+			        <span th:text="#{button.logout}">로그아웃</span>
+			    </button>
+			</form>
+	    </div>
+	</div>
+
+	
+</div>
+</body>
+</html>
