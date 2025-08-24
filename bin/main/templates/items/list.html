@@ -78,7 +78,7 @@
                            th:text="${item.itemName}" 
                            th:attr="title=${item.itemName}">상품명</a>
                     </td>
-                    <td th:text="${#numbers.formatInteger(item.price,0,'COMMA')} + '원'">0</td>
+                    <td th:text="${{item.price}}">0</td>
                     <td th:text="${item.quantity}">0</td>
                     <td class="text-center">
                         <div class="btn-group btn-group-sm" role="group">
