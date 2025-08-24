@@ -4,11 +4,15 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import hello.springmvc2.domain.item.converter.ItemIdToItemConverter;
+import hello.springmvc2.domain.item.converter.ItemToStringConverter;
+import hello.springmvc2.domain.item.converter.NumberFormatter;
 import hello.springmvc2.web.interceptor.LogInterceptor;
 import hello.springmvc2.web.interceptor.LoginCheckInterceptor;
 import hello.springmvc2.web.login.argumentresolver.LoginMemberArgumentResolver;
@@ -18,13 +22,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
+	private final ItemToStringConverter itemToStringConverter;
+	private final ItemIdToItemConverter itemIdToItemConverter;
+	private final NumberFormatter numberFormatter;
+	
 	private final LoginMemberArgumentResolver loginMemberArgumentResolver;
 	
 	private final LogInterceptor logInterceptor;
 	private final LoginCheckInterceptor loginCheckInterceptor;
 	
 	private final static String[] STATIC_RESOURCES = { "/css/**", "/*.ico" };
-	private final static String[] AUTH_WHITELIST = { "/", "/members/register", "/login", "/logout", "/error" };
+	private final static String[] AUTH_WHITELIST = { "/", "/members/register", 
+													 "/login", "/logout", "/error" };
 	
 	@Bean
 	BCryptPasswordEncoder passwordEncoder() {
@@ -35,6 +44,14 @@ public class WebConfig implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(loginMemberArgumentResolver);
     }
+
+	@Override
+	public void addFormatters(FormatterRegistry registry) {
+		registry.addConverter(itemIdToItemConverter);
+		registry.addConverter(itemToStringConverter);
+		registry.addFormatter(numberFormatter);
+	}
+	
     
     @Override
 	public void addInterceptors(InterceptorRegistry registry) {	
@@ -55,6 +72,5 @@ public class WebConfig implements WebMvcConfigurer {
 		System.arraycopy(b, 0, result, a.length, b.length);
 		return result;
 	}
-	
     
 }

@@ -46,8 +46,7 @@ public class ItemController {
 	}
 	
 	@GetMapping("/{itemId}")
-	public String getItem(@PathVariable("itemId") Long itemId, Model model) {
-		Item item = itemService.findItemById(itemId);
+	public String getItem(@PathVariable("itemId") Item item, Model model) {
 		model.addAttribute("item", item);
 		return "items/detail"; // templates/items/detail.html
 	}
@@ -76,15 +75,14 @@ public class ItemController {
 	}
 	
 	@GetMapping("/{itemId}/edit")
-	public String editForm(@PathVariable("itemId") Long itemId, Model model) {
-		Item item = itemService.findItemById(itemId);
+	public String editForm(@PathVariable("itemId") Item item, Model model) {
 		ItemUpdateForm form = ItemMapper.toForm(item);
 		model.addAttribute("form", form);
 		return "items/editForm";
 	}
 	
     @PostMapping("/{itemId}/edit")
-    public String updateItem(@PathVariable("itemId") Long itemId,
+    public String updateItem(@PathVariable("itemId") Item item,
                              @Validated @ModelAttribute("form") ItemUpdateForm form,
                              BindingResult bindingResult) {
     	
@@ -94,13 +92,13 @@ public class ItemController {
             return "items/editForm";
         }
         
-        itemService.updateItem(itemId, form);
+        itemService.updateItem(item.getId(), form);
         return "redirect:/items/{itemId}";
     }
     
     @PostMapping("/{itemId}/delete")
-    public String deleteItem(@PathVariable("itemId") Long itemId) {
-    	itemService.deleteItem(itemId);
+    public String deleteItem(@PathVariable("itemId") Item item) {
+    	itemService.deleteItem(item.getId());
     	return "redirect:/items";
     }
     

@@ -18,23 +18,37 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class DataInitializer {
 
-	private final ItemRepository itemRepository;
-	private final MemberRepository memberRepository;
-	private final BCryptPasswordEncoder passwordEncdoer;
+    private final ItemRepository itemRepository;
+    private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-	@PostConstruct
-	public void run() {
-		// 초기 테스트 데이터 삽입
-		itemRepository.save(new Item(null, "테스트 아이템1", 10000, 10));
-		itemRepository.save(new Item(null, "테스트 아이템2", 20000, 20));
-		itemRepository.save(new Item(null, "테스트 아이템3", 30000, 30));
+    @PostConstruct
+    public void init() {
+        log.info("=== 데이터 초기화 시작 ===");
+        initItems();
+        initMembers();
+        log.info("=== 데이터 초기화 완료 ===");
+    }
 
-		Member member1 = Member.builder().loginId("Anna").encryptedPassword(passwordEncdoer.encode("28482848a")).displayName("Anna")
-				.createdAt(LocalDateTime.now()).lastModifiedAt(LocalDateTime.now()).build();
-		Member member2 = Member.builder().loginId("Erma").encryptedPassword(passwordEncdoer.encode("28482848a")).displayName("Erma")
-				.createdAt(LocalDateTime.now()).lastModifiedAt(LocalDateTime.now()).build();
-		memberRepository.save(member1);
-		memberRepository.save(member2);
-	}
+    private void initItems() {
+        itemRepository.save(new Item(null, "테스트 아이템1", 10_000, 10));
+        itemRepository.save(new Item(null, "테스트 아이템2", 20_000, 20));
+        itemRepository.save(new Item(null, "테스트 아이템3", 30_000, 30));
+    }
 
+    private void initMembers() {
+        saveMember("Anna", "28482848a", "Anna");
+        saveMember("Erma", "28482848a", "Erma");
+    }
+
+    private void saveMember(String loginId, String rawPassword, String displayName) {
+        Member member = Member.builder()
+                .loginId(loginId)
+                .encryptedPassword(passwordEncoder.encode(rawPassword))
+                .displayName(displayName)
+                .createdAt(LocalDateTime.now())
+                .lastModifiedAt(LocalDateTime.now())
+                .build();
+        memberRepository.save(member);
+    }
 }

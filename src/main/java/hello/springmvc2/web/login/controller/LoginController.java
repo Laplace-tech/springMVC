@@ -36,18 +36,16 @@ public class LoginController {
 	        return "login/loginForm";
 	    }
 
-	    LoginResult loginResult = loginService.loginCheckAuthentication(form.getLoginId(), form.getPassword());
+	    String loginID = form.getLoginId();
+	    String rawPassword = form.getPassword();
+	    LoginResult loginResult = loginService.loginCheckAuthentication(loginID, rawPassword);
 
-	    switch (loginResult) {
-	        case SUCCESS -> {
-	            loginService.createSession(form.getLoginId(), request);
-	            return "redirect:" + redirectURL; // 로그인 성공 후 홈으로 이동
-	        }
-	        case USERNAME_NOT_FOUND -> bindingResult.rejectValue("loginId", "login.loginIdNotFound");
-	        case PASSWORD_MISMATCH -> bindingResult.rejectValue("password", "login.passwordMismatch");
-	        default -> bindingResult.reject("login.loginFailure");
+	    if(loginResult == LoginResult.SUCCESS) {
+	    	loginService.createSession(form.getLoginId(), request);
+	    	return "redirect:" + redirectURL;
 	    }
-
+	    
+	    handleLoginFailure(loginResult, bindingResult);
 	    return "login/loginForm";
 	}
 	
@@ -60,4 +58,11 @@ public class LoginController {
 		return "redirect:/";
 	}
 
+	private void handleLoginFailure(LoginResult loginResult, BindingResult bindingResult) {
+		switch (loginResult) {
+		case USERNAME_NOT_FOUND -> bindingResult.rejectValue("loginId", "login.loginIdNotFound");
+		case PASSWORD_MISMATCH -> bindingResult.rejectValue("password", "login.passwordMismatch");
+		default -> bindingResult.reject("login.loginFailure");
+		}
+	}
 }

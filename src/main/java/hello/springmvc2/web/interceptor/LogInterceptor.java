@@ -71,62 +71,60 @@ import lombok.extern.slf4j.Slf4j;
  *     → afterCompletion() 호출됨
  */
 
-
 /**
  * LogInterceptor
  * 
- * - 요청/응답 흐름 로깅
- * - 예외 발생 시 로깅 처리
- * - DispatcherType 정보 포함
+ * - 요청/응답 흐름 로깅 - 예외 발생 시 로깅 처리 - DispatcherType 정보 포함
  */
 @Slf4j
 @Component
 public class LogInterceptor implements HandlerInterceptor {
 
-	private static final String PREFIX = "PRE-HANDLE";
-	private static final String SUFFIX = "AFTER-COMPLETION";
+	private static final String LOG_ID = "logId";
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {System.out.println();
+			throws Exception {
+		System.out.println();
+
 		String requestURI = request.getRequestURI();
 		String uuid = UUID.randomUUID().toString();
 		DispatcherType dispatcherType = request.getDispatcherType();
-		
+
 		// 후속 메서드에서 사용할 수 있도록 요청에 UUID 저장
-		request.setAttribute("logId", uuid); 
-		
-		log.info("{} [{}][{}][{}]", PREFIX, uuid, dispatcherType, requestURI);
+		request.setAttribute(LOG_ID, uuid);
+
+		log.info("[PRE-HANDLE] [{}][{}][{}]", uuid, dispatcherType, requestURI);
 		return true; // 다음 인터셉터 혹은 컨트롤러 실행으로 진행
 	}
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			@Nullable ModelAndView modelAndView) throws Exception {
-		log.info("POST-HANDLE - ModelAndView: {}", modelAndView);
+		log.info("POST-HANDLE - ModelAndView: {}", modelAndView.getView());
 	}
 
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
 			@Nullable Exception ex) throws Exception {
 		String requestURI = request.getRequestURI();
-		String logId = (String) request.getAttribute("logId");
-		
-		log.info("{} [{}][{}]", SUFFIX, logId, requestURI);
-		
-		if(ex != null) {
-			log.error("{} - Exception occured for request [{}]", SUFFIX, logId, ex);
+		String logId = (String) request.getAttribute(LOG_ID);
+
+		log.info("[AFTER-COMPLETION] [{}][{}]", logId, requestURI);
+
+		if (ex != null) {
+			log.error("[AFTER-COMPLETION] - Exception occured for request [{}]", logId, ex);
 		}
 	}
-	
-    @PostConstruct
-    public void init() {
-        log.info("LogInterceptor Initialized");
-    }
 
-    @PreDestroy
-    public void destroy() {
-        log.info("LogInterceptor Destroyed");
-    }
+	@PostConstruct
+	public void init() {
+		log.info("LogInterceptor Initialized");
+	}
+
+	@PreDestroy
+	public void destroy() {
+		log.info("LogInterceptor Destroyed");
+	}
 
 }

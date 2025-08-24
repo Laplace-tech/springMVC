@@ -37,15 +37,16 @@ public class LoginService {
 		});
 	}
 
-	public LoginMember getLoginMember(String loginId) {
-		return memberRepository.findByLoginId(loginId)
-				.map(memberMapper::toLoginMember)
-				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 LoginId : " + loginId));
-	}
-	
 	public void createSession(String loginId, HttpServletRequest request) {
 	    LoginMember loginMember = getLoginMember(loginId);
 	    HttpSession session = request.getSession();
 	    session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
 	}
+	
+	private LoginMember getLoginMember(String loginId) {
+		return memberRepository.findByLoginId(loginId)
+				.map(memberMapper::toLoginMember)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 LoginId : " + loginId));
+	}
+	
 }

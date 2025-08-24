@@ -24,25 +24,25 @@ public class ItemValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		Integer price = null;
 		Integer quantity = null;
-		
-		if(target instanceof ItemSaveForm saveForm) {
+
+		if (target instanceof ItemSaveForm saveForm) {
 			price = saveForm.getPrice();
 			quantity = saveForm.getQuantity();
 		} else if (target instanceof ItemUpdateForm updateForm) {
 			price = updateForm.getPrice();
 			quantity = updateForm.getQuantity();
 		} else {
-            log.warn("지원하지 않는 폼 타입으로 검증 시도: {}", target.getClass());
-            return;
-        }
-		
-		 if (price != null && quantity != null) {
-	            int totalPrice = price * quantity;
-	            if (totalPrice < MIN_TOTAL_PRICE) {
-	                errors.reject("totalPriceMin", new Object[] {MIN_TOTAL_PRICE, totalPrice},
-	                        String.format("총 가격은 최소 %d원 이상이어야 합니다. 현재 : %d", MIN_TOTAL_PRICE, totalPrice));
-	            }
-	        }
+			log.warn("지원하지 않는 폼 타입으로 검증 시도: {}", target.getClass());
+			return;
+		}
+
+		if (price != null && quantity != null) {
+			int totalPrice = price * quantity;
+			if (totalPrice < MIN_TOTAL_PRICE) {
+				errors.reject("totalPriceMin", new Object[] { MIN_TOTAL_PRICE, totalPrice },
+						String.format("총 가격은 최소 %d원 이상이어야 합니다. 현재 : %d", MIN_TOTAL_PRICE, totalPrice));
+			}
+		}
 	}
 	
 	
