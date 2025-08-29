@@ -54,8 +54,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 								  WebDataBinderFactory binderFactory) throws Exception {
 		
 		/**
-		 * webRequest.getNativeRequest(HttpServletRequest.class) 
-		 * -> 현재 요청의 원본(HttpServletRequest) 객체 꺼내오기
+		 * 현재 요청의 원본(HttpServletRequest) 객체 꺼내오기
 		 */
 		HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
         if(request == null) {
@@ -64,8 +63,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         }
 		
 		/**
-		 * request.getSession(false) 
-		 * -> 세션이 있으면 반환, 없으면 null(새로 만들지 않음)
+		 * 기존 세션이 있으면 반환, 없으면 null(새로 만들지 않음) 
 		 */
 		HttpSession session = request.getSession(false);
 		if (session == null) {
@@ -74,17 +72,16 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         }
 
 		/**
-		 * session.getAttribute(SessionConst.LOGIN_MEMBER) 
-		 * -> 세션에 저장된 로그인 멤버 객체 꺼냄, 없다면 null 반환
+		 * 세션에 저장된 로그인 멤버 객체 꺼냄, 없다면 null 반환
 		 */
-		LoginMember loginMember = (LoginMember) session.getAttribute(SessionConst.LOGIN_MEMBER);
-		if(loginMember == null) {
-			log.info("세션에 로그인 멤버 정보가 없음");
-			return null;
+		Object attribute = session.getAttribute(SessionConst.LOGIN_MEMBER);
+		if(attribute instanceof LoginMember loginMember) {
+			log.info("세션에서 조회한 로그인 사용자: {}");
+			return loginMember;
 		}
 		
-        log.info("세션에서 조회한 로그인 사용자: {}", loginMember);
-        return loginMember;
+	    log.info("세션에 로그인 멤버 정보가 없습니다.");
+	    return null;
     }
 	
 }

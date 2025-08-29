@@ -1,6 +1,9 @@
 package hello.springmvc2.domain.item.controller.form;
 
+import java.util.List;
+
 import org.hibernate.validator.constraints.Range;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,5 +26,9 @@ public class ItemSaveForm {
 	@NotNull(message = "{item.quantity.notNull}")
 	@Range(min = 1, max = 9999, message = "{item.quantity.range}")
 	private Integer quantity;
+	
+	private MultipartFile attachFile;
+	
+	private List<MultipartFile> imageFiles;
 	
 }

@@ -64,12 +64,32 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
     private boolean isLoggedIn(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        return (session != null && session.getAttribute(SessionConst.LOGIN_MEMBER) != null);
+        return (session != null && 
+        		session.getAttribute(SessionConst.LOGIN_MEMBER) != null);
     }
 
+    /**
+     * URL vs URI
+     * 
+     * URI (Uniform Resource Identifier) 
+     * - 자원의 식별자
+     * - "이 문자열로 자원이 무엇인지 식별할 수 있다"는 의미만 있음
+     * - 접근 방법이나 위치까지는 포함하지 않아도 된다.
+     * 
+     * URL (Uniform Resource Locator) : URI + 접근 방법 포함
+     * - URI의 한 종류로, 자원에 접근할 수 있는 방법까지 포함한 문자열 입니다.
+     * - 보통 "프로토콜://도메인/경로?쿼리파라미터" 형태
+     * 
+     */
     private void redirectToLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String redirectURI = URLEncoder.encode(request.getRequestURI(), StandardCharsets.UTF_8);
-        response.sendRedirect("/login?redirectURL=" + redirectURI);
+    	// 요청 URL : http://localhost:8080/items/123 
+    	String requestURI = request.getRequestURI(); // 결과 : /items/123
+    	
+    	String encodedURI = URLEncoder.encode(requestURI, StandardCharsets.UTF_8);
+    	String redirectURL = "/login?redirectURL=" + encodedURI;
+    	
+    	response.sendRedirect(redirectURL);
+    	log.info("[리다이렉트] redirect : {}", redirectURL);
     }
 
     // ============ Bean Lifecycle ============

@@ -31,9 +31,9 @@ public class DataInitializer {
     }
 
     private void initItems() {
-        itemRepository.save(new Item(null, "테스트 아이템1", 10_000, 10));
-        itemRepository.save(new Item(null, "테스트 아이템2", 20_000, 20));
-        itemRepository.save(new Item(null, "테스트 아이템3", 30_000, 30));
+//        itemRepository.save(new Item(null, "테스트 아이템1", 10_000, 10));
+//        itemRepository.save(new Item(null, "테스트 아이템2", 20_000, 20));
+//        itemRepository.save(new Item(null, "테스트 아이템3", 30_000, 30));
     }
 
     private void initMembers() {

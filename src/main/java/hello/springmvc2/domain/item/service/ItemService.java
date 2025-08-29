@@ -1,5 +1,6 @@
 package hello.springmvc2.domain.item.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -11,6 +12,8 @@ import hello.springmvc2.domain.item.controller.mapper.ItemMapper;
 import hello.springmvc2.domain.item.entry.Item;
 import hello.springmvc2.domain.item.exception.ItemNotFoundException;
 import hello.springmvc2.domain.item.repository.ItemRepository;
+import hello.springmvc2.upload.domain.UploadFile;
+import hello.springmvc2.upload.file.FileStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ItemService {
 
+	private final FileStore fileStore;
 	private final ItemRepository itemRepository;
 
 	public Item findItemById(Long id) {
@@ -30,8 +34,16 @@ public class ItemService {
 		return itemRepository.findAll();
 	}
 	
-	public Item saveItem(ItemSaveForm form) {
-		Item item = ItemMapper.toEntity(form); // id 필드는 Repository
+	public Item saveItem(ItemSaveForm form) throws IllegalStateException, IOException {
+		
+		UploadFile attachFile = fileStore.storeFile(form.getAttachFile());
+		List<UploadFile> imageFiles = fileStore.storeFiles(form.getImageFiles());
+		
+		Item item = ItemMapper.toEntity(form).toBuilder() // id 필드는 Repository
+						.attachFile(attachFile)
+						.imageFiles(imageFiles)
+						.build();
+		
 		return itemRepository.save(item);
 	}
 

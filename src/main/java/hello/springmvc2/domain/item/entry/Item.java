@@ -1,5 +1,9 @@
 package hello.springmvc2.domain.item.entry;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import hello.springmvc2.upload.domain.UploadFile;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -40,5 +44,7 @@ public class Item {
 	private String itemName;
 	private Integer price;
 	private Integer quantity;
+	private UploadFile attachFile;
+	private List<UploadFile> imageFiles;
 	
 }

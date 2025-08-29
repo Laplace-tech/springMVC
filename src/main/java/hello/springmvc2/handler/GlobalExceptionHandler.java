@@ -1,19 +1,21 @@
 package hello.springmvc2.handler;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import hello.springmvc2.domain.item.exception.ItemNotFoundException;
 import hello.springmvc2.domain.member.exception.MemberNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 /**
  * [스프링 MVC 예외 처리 계층 구조]
@@ -59,52 +61,44 @@ import lombok.extern.slf4j.Slf4j;
  * [GlobalExceptionHandler] -> @ExceptionHandler 매핑 -> handleItemNotFound()..
  *    │
  *    ▼
- * setCommonModel() -> model 에 에러 정보 저장
- *    │
- *    ▼
- * "error/errorPage" 반환 -> thymeleaf 렌더링 -> 사용자에게 HTML 전달
+ * "error/errorPage" 반환 -> 사용자에게 HTML 전달
  */
 
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // ---------------------- 404 NOT FOUND ----------------------
-    @ExceptionHandler({ItemNotFoundException.class, MemberNotFoundException.class, NoResourceFoundException.class, NoHandlerFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNotFound(RuntimeException ex, HttpServletRequest request, Model model) {
-        return handleException(HttpStatus.NOT_FOUND, ex, request, model, "[404 오류]");
-    }
-
-    // ---------------------- 400 BAD REQUEST ----------------------
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleBadRequest(IllegalArgumentException ex, HttpServletRequest request, Model model) {
-        return handleException(HttpStatus.BAD_REQUEST, ex, request, model, "[400 오류]");
-    }
-
-    // ---------------------- 500 INTERNAL SERVER ERROR ----------------------
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleServerError(Exception ex, HttpServletRequest request, Model model) {
-        return handleException(HttpStatus.INTERNAL_SERVER_ERROR, ex, request, model, "[500 오류]");
-    }
+	private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	private static final Map<Class<? extends Throwable>, HttpStatus> EXCEPTION_STATUS_MAP = 
+			Map.ofEntries(
+					Map.entry(ItemNotFoundException.class, HttpStatus.NOT_FOUND),
+					Map.entry(MemberNotFoundException.class, HttpStatus.NOT_FOUND),
+					Map.entry(NoResourceFoundException.class, HttpStatus.NOT_FOUND),
+					Map.entry(NoHandlerFoundException.class, HttpStatus.NOT_FOUND),
+					Map.entry(IllegalArgumentException.class, HttpStatus.BAD_REQUEST)
+					);
 	
-	private String handleException(HttpStatus status, Exception ex, HttpServletRequest request, Model model, String logPrefix) {
-		log.warn("{} uri={}, message={}", logPrefix, request.getRequestURI(), ex.getMessage());
-		model.addAllAttributes(Map.of( 
-				"status", status.value(),
-				"error", status.getReasonPhrase(),
-				"timestamp", LocalDateTime.now(),
-				"path", request.getRequestURI(),
-				"message", ex.getMessage(),
-				"exception", ex.getClass().getSimpleName(),
-				"trace", getStackTraceAsString(ex)
-				));
+	@ExceptionHandler(Exception.class)
+	public String handlerExceptions(Exception ex, HttpServletRequest request, HttpServletResponse response, Model model) {
+		HttpStatus status = EXCEPTION_STATUS_MAP.getOrDefault(ex.getClass(), HttpStatus.INTERNAL_SERVER_ERROR);
+		response.setStatus(status.value());
+		
+		log.warn("[Error : {}], URI = {}, message = {}", status.value(), request.getRequestURI(), ex.getMessage());
+		
+		Map<String, Object> errorAttributes = new LinkedHashMap<>();
+		errorAttributes.put("status", status.value());
+		errorAttributes.put("error", status.getReasonPhrase());
+		errorAttributes.put("timestamp", LocalDateTime.now().format(TIMESTAMP_FORMATTER));
+		errorAttributes.put("path", request.getRequestURI());
+		errorAttributes.put("message", ex.getMessage());
+		errorAttributes.put("exception", ex.getClass().getSimpleName());
+		errorAttributes.put("trace", getStackTraceAsString(ex));
+		
+		model.addAllAttributes(errorAttributes);
 		return "error/errorPage";
 	}
-	
-    // --- 유틸: stack trace 문자열로 변환 ---
+
+	// --- 유틸: stack trace 문자열로 변환 ---
     private String getStackTraceAsString(Exception ex) {
         StringBuilder sb = new StringBuilder();
         for (StackTraceElement element : ex.getStackTrace()) {

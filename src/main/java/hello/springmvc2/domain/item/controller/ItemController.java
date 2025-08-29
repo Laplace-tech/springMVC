@@ -1,5 +1,6 @@
 package hello.springmvc2.domain.item.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,8 @@ import hello.springmvc2.domain.item.controller.mapper.ItemMapper;
 import hello.springmvc2.domain.item.entry.Item;
 import hello.springmvc2.domain.item.service.ItemService;
 import hello.springmvc2.domain.item.validator.ItemValidator;
+import hello.springmvc2.upload.domain.UploadFile;
+import hello.springmvc2.upload.file.FileStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,7 +63,7 @@ public class ItemController {
 	@PostMapping("/add")
 	public String saveItem(@Validated @ModelAttribute("form") ItemSaveForm form, 
 						   BindingResult bindingResult,
-						   RedirectAttributes redirectAttributes) {
+						   RedirectAttributes redirectAttributes) throws IllegalStateException, IOException {
 		
 		// 개별 Validator에서 validateTotalPrice도 수행함
 		if(bindingResult.hasErrors()) {
@@ -69,6 +72,7 @@ public class ItemController {
 		}
 		
 		Item savedItem = itemService.saveItem(form);
+		
 		redirectAttributes.addAttribute("itemId", savedItem.getId());
 		redirectAttributes.addAttribute("status", true);
 		return "redirect:/items/{itemId}";

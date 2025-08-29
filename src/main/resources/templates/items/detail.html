@@ -45,6 +45,17 @@
             <i class="fa-solid fa-box me-1"></i> 
             <span th:text="|#{page.item} [${{item}}]|">상품 상세</span>
         </div>
+		
+		<div class="mb-3">
+		    <label for="attachFile" class="form-label">첨부파일</label>
+		    <div>
+		        <a th:if="${item.attachFile != null}"
+		           th:href="@{|/files/${item.attachFile.storeFileName}|}"
+		           th:text="${item.attachFile.uploadFileName}">첨부파일 다운로드</a>
+		        <span th:if="${item.attachFile == null}" class="text-muted">첨부된 파일 없음</span>
+		    </div>
+		</div>
+		
         <div class="card-body">
             <div class="mb-3">
                 <label for="itemId" class="form-label" th:text="#{label.item.id}">상품 ID</label>

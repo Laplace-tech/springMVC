@@ -15,7 +15,6 @@ public class NumberFormatter implements Formatter<Number> {
 
     @Override
     public Number parse(String text, Locale locale) throws ParseException {
-        log.info("NumberFormatter : [{}] [{}]", text, locale);
         //"1,000" -> 1000
         NumberFormat format = NumberFormat.getInstance(locale);
         return format.parse(text);
@@ -23,7 +22,6 @@ public class NumberFormatter implements Formatter<Number> {
 
     @Override
     public String print(Number object, Locale locale) {
-        log.info("NumberFormatter : [{}] [{}]", object, locale);
         //1000 -> "1,000"
         return NumberFormat.getInstance(locale).format(object);
     }

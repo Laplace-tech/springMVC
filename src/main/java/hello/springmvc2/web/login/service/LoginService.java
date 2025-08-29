@@ -25,14 +25,14 @@ public class LoginService {
 
 		return memberRepository.findByLoginId(loginId).map(member -> {
 			if (passwordEncoder.matches(rawPassword, member.getEncryptedPassword())) {
-				log.info("로그인 성공 {}", loginId);
+				log.info("[LoginCheckAuthentication] 로그인 성공 {}", loginId);
 				return LoginResult.SUCCESS;
 			} else {
-				log.warn("비밀번호 불일치 {}", loginId);
+				log.warn("[LoginCheckAuthentication] 비밀번호 불일치 {}", loginId);
 				return LoginResult.PASSWORD_MISMATCH;
 			}
 		}).orElseGet(() -> {
-			log.warn("아이디 없음 {}", loginId);
+			log.warn("[LoginCheckAuthentication] 아이디 없음 {}", loginId);
 			return LoginResult.USERNAME_NOT_FOUND;
 		});
 	}
