@@ -2,7 +2,6 @@ package hello.springmvc2.web.config;
 
 import java.util.List;
 
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -14,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import hello.springmvc2.domain.item.converter.ItemIdToItemConverter;
 import hello.springmvc2.domain.item.converter.ItemToStringConverter;
 import hello.springmvc2.domain.item.converter.NumberFormatter;
-import hello.springmvc2.web.filter.HttpRequestLoggingFilter;
 import hello.springmvc2.web.interceptor.LogInterceptor;
 import hello.springmvc2.web.interceptor.LoginCheckInterceptor;
 import hello.springmvc2.web.login.argumentresolver.LoginMemberArgumentResolver;

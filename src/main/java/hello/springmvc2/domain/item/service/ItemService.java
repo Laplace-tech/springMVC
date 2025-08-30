@@ -1,10 +1,12 @@
 package hello.springmvc2.domain.item.service;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import hello.springmvc2.domain.item.controller.form.ItemSaveForm;
 import hello.springmvc2.domain.item.controller.form.ItemUpdateForm;
@@ -36,9 +38,22 @@ public class ItemService {
 	
 	public Item saveItem(ItemSaveForm form) throws IllegalStateException, IOException {
 		
-		UploadFile attachFile = fileStore.storeFile(form.getAttachFile());
-		List<UploadFile> imageFiles = fileStore.storeFiles(form.getImageFiles());
+		MultipartFile attachPart = form.getAttachFile();
+		List<MultipartFile> imagePart = form.getImageFiles();
 		
+		// 단일 첨부파일 처리
+		UploadFile attachFile = null;
+		if(!attachPart.isEmpty() && attachPart != null) {
+			attachFile = fileStore.storeFile(attachPart);
+		}
+		
+		// 다중 이미지 처리
+		List<UploadFile> imageFiles = Collections.emptyList();
+		if(!imagePart.isEmpty() && imagePart != null) {
+			imageFiles = fileStore.storeFiles(imagePart);
+		}
+		
+		// Entity 변환 + 파일 매핑
 		Item item = ItemMapper.toEntity(form).toBuilder() // id 필드는 Repository
 						.attachFile(attachFile)
 						.imageFiles(imageFiles)
@@ -68,6 +83,15 @@ public class ItemService {
 		if(!pathId.equals(formIdSupplier.get())) {
             throw new IllegalArgumentException("Path variable id와 form의 id가 일치하지 않습니다. pathId: " + pathId + ", formId: " + formIdSupplier.get());
 		}
+	}
+	
+	public String findOriginalUploadFilename(String storeFilename) {
+		return this.itemRepository.findAll().stream()
+				.filter(item -> item.getAttachFile() != null)
+				.filter(item -> storeFilename.equals(item.getAttachFile().getStoreFileName()))
+				.findFirst()
+				.map(item -> item.getAttachFile().getUploadFileName())
+				.orElse("Unknown");
 	}
 	
 	

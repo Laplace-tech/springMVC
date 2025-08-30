@@ -87,20 +87,22 @@
 
 				<!-- 첨부파일 (단일) -->
 				<div class="mb-3">
-					<label for="attachFile" class="form-label">
-						<i class="fa-solid fa-paperclip me-1"></i> 첨부파일
-					</label>
-					<input type="file" id="attachFile" th:field="*{attachFile}" class="form-control">
+				    <label for="attachFile" class="form-label">
+				        <i class="fa-solid fa-paperclip me-1"></i> 첨부파일
+				    </label>
+				    <input type="file" id="attachFile" th:field="*{attachFile}" class="form-control" />
 				</div>
-				
+
 				<!-- 이미지 파일 (다중 업로드 + 미리보기) -->
 				<div class="mb-3">
-					<label for="imageFiles" class="form-label">
-						<i class="fa-solid fa-image me-1"></i> 상품 이미지
-					</label>
-					<input type="file" id="imageFiles" th:field="*{imageFiles}" class="form-control" multiple
-						onchange="previewImages(event)">
-					<div class="preview-container mt-2 d-flex flex-wrap"></div>
+				    <label for="imageFiles" class="form-label">
+				        <i class="fa-solid fa-image me-1"></i> 상품 이미지
+				    </label>
+				    <input type="file" id="imageFiles" th:field="*{imageFiles}" class="form-control" 
+				           multiple accept="image/*" onchange="previewImages(event)" />
+
+				    <!-- 미리보기 영역 -->
+				    <div id="preview-container" class="mt-2 d-flex flex-wrap gap-2"></div>
 				</div>
 				
 				<!-- 버튼 영역 -->

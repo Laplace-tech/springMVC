@@ -1,6 +1,5 @@
 package hello.springmvc2.domain.item.entry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import hello.springmvc2.upload.domain.UploadFile;

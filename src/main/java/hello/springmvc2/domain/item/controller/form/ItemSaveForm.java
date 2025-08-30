@@ -28,7 +28,6 @@ public class ItemSaveForm {
 	private Integer quantity;
 	
 	private MultipartFile attachFile;
-	
 	private List<MultipartFile> imageFiles;
 	
 }

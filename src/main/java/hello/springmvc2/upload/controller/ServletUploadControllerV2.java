@@ -44,12 +44,14 @@ public class ServletUploadControllerV2 {
 			log.info("name={}", part.getName());
 			
 			part.getHeaderNames().forEach(header -> log.info("[Header] {} : {}", header, part.getHeader(header)));
+			
 			log.info("submittedFileName={}", part.getSubmittedFileName());
 			log.info("size={}", part.getSize()); // part body size
 
 			// 파일 여부 확인
 			String submittedFileName = part.getSubmittedFileName();
 			if (StringUtils.hasText(submittedFileName)) {
+				// 파일 처리
 				Path filePath = Paths.get(fileDir).resolve(submittedFileName);
 				part.write(filePath.toString());
 				log.info("파일 저장 fullPath={}", filePath.toAbsolutePath());

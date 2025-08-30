@@ -46,15 +46,6 @@
             <span th:text="|#{page.item} [${{item}}]|">상품 상세</span>
         </div>
 		
-		<div class="mb-3">
-		    <label for="attachFile" class="form-label">첨부파일</label>
-		    <div>
-		        <a th:if="${item.attachFile != null}"
-		           th:href="@{|/files/${item.attachFile.storeFileName}|}"
-		           th:text="${item.attachFile.uploadFileName}">첨부파일 다운로드</a>
-		        <span th:if="${item.attachFile == null}" class="text-muted">첨부된 파일 없음</span>
-		    </div>
-		</div>
 		
         <div class="card-body">
             <div class="mb-3">
@@ -77,6 +68,32 @@
                 <input type="text" id="quantity" class="form-control" th:value="${item.quantity}" readonly>
             </div>
         </div>
+
+		<!-- 단일 첨부파일 다운로드 -->
+		<div th:if="${item.attachFile != null}" class="mb-3">
+		    <label class="form-label">
+		        <i class="fa-solid fa-paperclip me-1"></i> 첨부파일
+		    </label>
+		    <a th:href="@{|/files/attach/${item.attachFile.storeFileName}|}" 
+		       th:text="${item.attachFile.uploadFileName}" download></a>
+		</div>
+
+		<!-- 다중 이미지 미리보기 -->
+		<div th:if="${item.imageFiles != null}" class="mb-3">
+		    <label class="form-label">
+		        <i class="fa-solid fa-image me-1"></i> 상품 이미지
+		    </label>
+			
+		    <div class="d-flex flex-wrap gap-2">
+		        <a th:each="img : ${item.imageFiles}" 
+		           th:href="@{|/files/images/${img.storeFileName}|}" target="_blank">
+		            <img th:src="@{|/files/images/${img.storeFileName}|}" 
+		                 th:alt="${img.uploadFileName}" 
+		                 style="width:120px; border:1px solid #ccc; border-radius:5px; cursor:pointer;"/>
+		        </a>
+		    </div>
+		</div>
+
 
         <div class="card-footer text-end">
             <a th:href="@{/items}" class="btn btn-secondary">

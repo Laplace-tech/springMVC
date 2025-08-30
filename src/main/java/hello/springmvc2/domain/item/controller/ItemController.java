@@ -22,8 +22,6 @@ import hello.springmvc2.domain.item.controller.mapper.ItemMapper;
 import hello.springmvc2.domain.item.entry.Item;
 import hello.springmvc2.domain.item.service.ItemService;
 import hello.springmvc2.domain.item.validator.ItemValidator;
-import hello.springmvc2.upload.domain.UploadFile;
-import hello.springmvc2.upload.file.FileStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

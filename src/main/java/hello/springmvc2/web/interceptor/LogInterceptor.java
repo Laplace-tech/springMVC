@@ -83,9 +83,10 @@ public class LogInterceptor implements HandlerInterceptor {
 	private static final String LOG_ID = "logId";
 
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
-		System.out.println();
+	public boolean preHandle(HttpServletRequest request, 
+				             HttpServletResponse response, 
+				             Object handler)
+			throws Exception {System.out.println();
 
 		String requestURI = request.getRequestURI();
 		String uuid = UUID.randomUUID().toString();
@@ -99,14 +100,24 @@ public class LogInterceptor implements HandlerInterceptor {
 	}
 
 	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-			@Nullable ModelAndView modelAndView) throws Exception {
-		log.info("POST-HANDLE - ModelAndView: {}", modelAndView.getView());
+	public void postHandle(HttpServletRequest request, 
+						   HttpServletResponse response,
+						   Object handler,
+						   @Nullable ModelAndView modelAndView) throws Exception {
+		
+		if(modelAndView != null) {
+			log.info("[POST-HANDLE] URI : {}, viewName : {}", request.getRequestURI(), modelAndView.getViewName());
+		} else {
+			log.info("[POST-HANDLE] URI : {}, ModelAndView is null (probably @ResponseBody or Resource)", request.getRequestURI());
+		}
 	}
 
 	@Override
-	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-			@Nullable Exception ex) throws Exception {
+	public void afterCompletion(HttpServletRequest request, 
+							    HttpServletResponse response, 
+							    Object handler,
+							    @Nullable Exception ex) throws Exception {
+		
 		String requestURI = request.getRequestURI();
 		String logId = (String) request.getAttribute(LOG_ID);
 

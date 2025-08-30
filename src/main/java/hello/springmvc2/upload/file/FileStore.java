@@ -1,6 +1,8 @@
 package hello.springmvc2.upload.file;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -60,6 +62,21 @@ public class FileStore {
 		
 		return new UploadFile(originalFilename, storeFilename);
 	}
+	
+	public UploadFile storeFile(File file) throws IOException {
+	    if (!file.exists() || !file.isFile()) {
+	        throw new IllegalArgumentException("파일이 존재하지 않습니다: " + file.getAbsolutePath());
+	    }
+
+	    String originalFilename = file.getName();
+	    String storeFilename = createStoreFilename(originalFilename);
+
+	    Path fullPath = Paths.get(fileDir, storeFilename);
+	    Files.copy(file.toPath(), fullPath);
+
+	    return new UploadFile(originalFilename, storeFilename);
+	}
+
 	
     /**
      * 서버 저장용 파일명 생성 (UUID + 확장자)

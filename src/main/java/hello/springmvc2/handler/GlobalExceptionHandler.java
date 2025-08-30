@@ -80,11 +80,27 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(Exception.class)
 	public String handlerExceptions(Exception ex, HttpServletRequest request, HttpServletResponse response, Model model) {
+		
+		String uri = request.getRequestURI();
+		
+		// ✅ 파일 다운로드 요청이면 뷰 렌더링 X
+		if (uri.startsWith("/files")) {
+			HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+			log.warn("[File Error : {}], URI = {}, message = {}", status.value(), uri, ex.getMessage());
+			return null;
+		}
+		
+		// 일반 웹 요청 처리
 		HttpStatus status = EXCEPTION_STATUS_MAP.getOrDefault(ex.getClass(), HttpStatus.INTERNAL_SERVER_ERROR);
 		response.setStatus(status.value());
-		
 		log.warn("[Error : {}], URI = {}, message = {}", status.value(), request.getRequestURI(), ex.getMessage());
 		
+		Map<String, Object> errorAttributes = setErrorAttributes(request, status, ex);
+		model.addAllAttributes(errorAttributes);
+		return "error/errorPage";
+	}
+
+	private Map<String, Object> setErrorAttributes(HttpServletRequest request, HttpStatus status, Exception ex) {
 		Map<String, Object> errorAttributes = new LinkedHashMap<>();
 		errorAttributes.put("status", status.value());
 		errorAttributes.put("error", status.getReasonPhrase());
@@ -94,10 +110,9 @@ public class GlobalExceptionHandler {
 		errorAttributes.put("exception", ex.getClass().getSimpleName());
 		errorAttributes.put("trace", getStackTraceAsString(ex));
 		
-		model.addAllAttributes(errorAttributes);
-		return "error/errorPage";
+		return errorAttributes;
 	}
-
+	
 	// --- 유틸: stack trace 문자열로 변환 ---
     private String getStackTraceAsString(Exception ex) {
         StringBuilder sb = new StringBuilder();
